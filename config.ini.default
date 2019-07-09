@@ -1,0 +1,10 @@
+# 
+# connection details
+# 
+
+[Connection]
+host = myhost
+database = mydb
+user = myuser
+password = mypass
+
