@@ -14,7 +14,7 @@ setup(
     long_description_content_type="text/markdown",
     packages=find_packages(),
     author='Giles Velarde',
-    maintainer='Kevin Pepper',
+    maintainer='Sanger Pathogen Informatics Team',
     maintainer_email='path-help@sanger.ac.uk',
     url='https://github.com/sanger-pathogens/writedb_entry_set',
     scripts=glob.glob('scripts/*'),
