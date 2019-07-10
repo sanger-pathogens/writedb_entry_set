@@ -5,7 +5,7 @@ The main script, writedb_entries.py, provides a wrapper for the Artemis writedb_
 Chado feature data to GFF or EMBL file formats.
 
 [![Build Status](https://travis-ci.org/sanger-pathogens/writedb_entry_set.svg?branch=master)](https://travis-ci.org/sanger-pathogens/writedb_entry_set)   
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/ariba/blob/master/LICENSE)   
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/writedb_entry_set/blob/master/LICENSE)   
 [![codecov](https://codecov.io/gh/sanger-pathogens/writedb_entry_set/branch/master/graph/badge.svg)](https://codecov.io/gh/sanger-pathogens/writedb_entry_set)
 
 ## Installation
