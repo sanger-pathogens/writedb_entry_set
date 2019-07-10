@@ -1,8 +1,8 @@
 # writedb_entry_set
 
 Repo to hold the writedb_entry_set Python code, extracted from the Sanger general GitLab repo.
-The main script, writedb_entries.py, provides a wrapper for the Artemis writedb_entry script that is used to extract 
-Chado feature data to GFF or EMBL file formats.
+The main script, writedb_entries.py, provides a wrapper for the Artemis writedb_entry script and is used to extract 
+Chado database feature data to GFF or EMBL file formats.
 
 [![Build Status](https://travis-ci.org/sanger-pathogens/writedb_entry_set.svg?branch=master)](https://travis-ci.org/sanger-pathogens/writedb_entry_set)   
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/writedb_entry_set/blob/master/LICENSE)   
@@ -20,6 +20,8 @@ python3 setup.py install
 ```
 
 ## Usage
+Chado database connection details can be provided to the program by adding them to a configuration file (see config.ini.default)
+and then passing the file path using the -d command line argument.
 ```
 Usage: writedb_entries.py [options]
 
@@ -38,7 +40,7 @@ Options:
                         if you wish to autogenerate a bundle, provide path
                         here
   -w WRITEDB_ENTRY, --writedb_entry=WRITEDB_ENTRY
-                        the path to writedb_entry
+                        the path to the ARtemis writedb_entry script
   -m MAX_FEATURE_INCREMENT, --max_feature_increment=MAX_FEATURE_INCREMENT
                         the max number features to be batched by artemis in
                         one go
