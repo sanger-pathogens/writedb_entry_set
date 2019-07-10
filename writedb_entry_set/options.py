@@ -1,7 +1,3 @@
-import os
-import configparser
-
-from password import get_password
 
 class OptionException(Exception):
     """

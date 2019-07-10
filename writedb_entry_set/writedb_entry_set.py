@@ -11,9 +11,10 @@ import logging
 import sys
 import subprocess
 import os
-import lib
-import setup
 import shutil
+
+from writedb_entry_set import lib
+from writedb_entry_set import configuration
 
 logger = logging.getLogger("writedb_entry_set")
 
@@ -67,8 +68,8 @@ def make_and_run_artemis_calls(top_level, start_at_feature_uniquename = None):
     level_name = ""
     folder_counter = 1
 
-    max_files_per_folder = setup.options.max_files_per_folder
-    max_feature_increment = setup.options.max_feature_increment
+    max_files_per_folder = configuration.options.max_files_per_folder
+    max_feature_increment = configuration.options.max_feature_increment
 
     must_add_feature = True
     if start_at_feature_uniquename is not None:
@@ -98,10 +99,10 @@ def make_and_run_artemis_calls(top_level, start_at_feature_uniquename = None):
             new_call = True
 
         if new_call:
-            filePath = "%s/%s/%s"  % ( setup.baseFilePath , level_name, folder_counter )
+            filePath = "%s/%s/%s"  % (configuration.baseFilePath , level_name, folder_counter)
             run_counter = 1
-            logger.info("filePath: " + filePath)
-            artemisCall = lib.ArtemisCall(filePath, setup.connectionFactory, setup.format, setup.options.writedb_entry, setup.options.test, setup.options.flattened, setup.options.submission, setup.options.ignoreobsolete)
+            logger.info("File Path: " + filePath)
+            artemisCall = lib.ArtemisCall(filePath, configuration.connectionFactory, configuration.format, configuration.options.writedb_entry, configuration.options.test, configuration.options.flattened, configuration.options.submission, configuration.options.ignoreobsolete)
             artemisCalls.append(artemisCall)
 
         if append_to_call:
@@ -120,23 +121,23 @@ def make_and_run_artemis_calls(top_level, start_at_feature_uniquename = None):
 
 
 def main():
-    if (setup.options.verbose):
+    if (configuration.options.verbose):
         logger.setLevel(logging.DEBUG)
 
     logger.info( "Fetching features for: " )
-    logger.info( setup.options.organism )
+    logger.info(configuration.options.organism)
 
     organisms = []
-    for org_common_name in setup.options.organism:
-        organisms.append(lib.makeOrganism(setup.connectionFactory, org_common_name))
-        lib.mkDir(setup.baseFilePath + "/" + org_common_name)
+    for org_common_name in configuration.options.organism:
+        organisms.append(lib.makeOrganism(configuration.connectionFactory, org_common_name))
+        lib.mkDir(configuration.baseFilePath + "/" + org_common_name)
 
-    annotated_only = setup.options.annotated_only
+    annotated_only = configuration.options.annotated_only
     for organism in organisms:
         if organism.organismName in annotated_only:
             organism.annotatedOnly = True
 
-    sqlw = lib.Sql2IndexWriter(setup.connectionFactory)
+    sqlw = lib.Sql2IndexWriter(configuration.connectionFactory)
     logger.debug("Initialised database connection factory")
 
     [logger.debug(x) for x in organisms]
@@ -144,7 +145,7 @@ def main():
 
     top_level = sqlw.out
 
-    failing_calls = make_and_run_artemis_calls(top_level, setup.options.start_at_feature_uniquename)
+    failing_calls = make_and_run_artemis_calls(top_level, configuration.options.start_at_feature_uniquename)
 
     if len(failing_calls) > 0 :
         still_failing_calls = re_run_artemis_calls(failing_calls)
@@ -162,33 +163,33 @@ def main():
                     logger.error("\n")
             sys.exit(1)
 
-    if setup.options.bundle:
-        ftpPath = setup.options.bundle
-        tgzFilePath = setup.baseFilePath + '.tar.gz'
-        logger.info('tar -zcvf '+ tgzFilePath + ' ' + setup.baseFilePath)
-        tgz = subprocess.Popen(['tar', '-zcvf', tgzFilePath, setup.baseFilePath ], stdout=subprocess.PIPE).communicate()[0]
+    if configuration.options.bundle:
+        ftpPath = configuration.options.bundle
+        tgzFilePath = configuration.baseFilePath + '.tar.gz'
+        logger.info('tar -zcvf ' + tgzFilePath + ' ' + configuration.baseFilePath)
+        tgz = subprocess.Popen(['tar', '-zcvf', tgzFilePath, configuration.baseFilePath], stdout=subprocess.PIPE).communicate()[0]
         logger.info (tgz)
         mkdir = lib.mkDir(ftpPath)
         logger.info (mkdir)
         mv = subprocess.Popen(['mv', tgzFilePath, ftpPath ], stdout=subprocess.PIPE).communicate()[0]
         logger.info (mv)
 
-    if setup.options.single_file:
-        for common_name in setup.options.organism:
+    if configuration.options.single_file:
+        for common_name in configuration.options.organism:
             if len(common_name) == 0:
                 continue
-        targetfilename = setup.baseFilePath + '/' + common_name + '.gff3.gz'
-        cmd = "find " + setup.baseFilePath + '/' + common_name + \
-              " -name '*.gff.gz' | xargs  " + setup.options.gtbin + \
+        targetfilename = configuration.baseFilePath + '/' + common_name + '.gff3.gz'
+        cmd = "find " + configuration.baseFilePath + '/' + common_name + \
+              " -name '*.gff.gz' | xargs  " + configuration.options.gtbin + \
               " gff3 -sort -retainids -tidy -gzip -force -o " + \
               targetfilename + " 2> " + \
-              setup.baseFilePath + '/' + common_name + ".log"
+              configuration.baseFilePath + '/' + common_name + ".log"
         logger.info (cmd)
         rval = os.system(cmd)
         if rval != 0:
             raise Exception("error tidying/merging/sorting input for " + common_name + " into " + targetfilename)
-        if os.path.isdir(setup.baseFilePath + '/' + common_name):
-            shutil.rmtree(setup.baseFilePath + '/' + common_name)
+        if os.path.isdir(configuration.baseFilePath + '/' + common_name):
+            shutil.rmtree(configuration.baseFilePath + '/' + common_name)
 
 if __name__ == "__main__":
     sys.exit(main())
